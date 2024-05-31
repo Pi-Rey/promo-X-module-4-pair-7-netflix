@@ -19,9 +19,9 @@ Por favor marca a continuación los ejercicios que hayáis terminado:
 
 **4.3 Diagramas y relaciones MySQL:**
 
-- [ ] 1.  Piensa qué relación es
-- [ ] 2.  Crea la relación User-Movies.
-- [ ] 3.  Crea la relación Movies-Actors.
+- [x] 1.  Piensa qué relación es
+- [x] 2.  Crea la relación User-Movies.
+- [x] 3.  Crea la relación Movies-Actors.
 
 **4.4 Fundamentos de Express JS:**
 
