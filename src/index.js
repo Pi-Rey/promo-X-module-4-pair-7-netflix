@@ -23,9 +23,24 @@ async function connectionDB () {
 server.get('/movies', async (req, res) => {
 
     const conn = await connectionDB();
-    const selectMovies = ' SELECT * FROM movies;';
-    const [results] = await conn.query(selectMovies);
-    res.json({success:true, movies: results})
+
+        //query params
+        const genreFilterParam = req.query.genre;
+        console.log(genreFilterParam)
+        //sql -> SELECT
+        let data;
+        if (genreFilterParam === ""){
+          const selectMovies= "SELECT * FROM movies;";
+          const [results] = await conn.query(selectMovies);
+          data = results;
+        } else{
+          const selectMovies= "SELECT * FROM movies WHERE genre = ?;";
+          const [results] = await conn.query(selectMovies, [genreFilterParam]);
+          data = results;
+        };  
+        //respondo con los datos
+        res.json({success : true, movies: data});
+
 	// const fakeMovies = [
 	// 	{
 	// 		id: 1,
@@ -54,6 +69,7 @@ server.get('/movies', async (req, res) => {
 	// } else {
 	// 	res.status(200).json({ movies: fakeMovies, success: true });
 	// }
+    conn.end();
 });
 
 // init express aplication
