@@ -27,8 +27,8 @@ const AllMovies = ({
             className="form__input-text"
             id="filterGenre"
             name="genre"
-            value={allMoviesOptionGenre}
-            onChange={handleOptions}
+            value={ allMoviesOptionGenre }
+            onChange={ handleOptions }
           >
             <option value="">Todas</option>
             <option value="Drama">Drama</option>
@@ -39,14 +39,14 @@ const AllMovies = ({
 
         <div className="movies__filters--sort">
           <label>
-            Ordernar: A-Z
+            Ordenar: A-Z
             <input
               className="movies__radio"
               type="radio"
               name="sort"
               value="asc"
-              checked={allMoviesOptionSort === "asc"}
-              onChange={handleOptions}
+              checked={ allMoviesOptionSort === "asc" }
+              onChange={ handleOptions }
             />
           </label>
 
@@ -57,14 +57,14 @@ const AllMovies = ({
               type="radio"
               name="sort"
               value="desc"
-              checked={allMoviesOptionSort === "desc"}
-              onChange={handleOptions}
+              checked={ allMoviesOptionSort === "desc" }
+              onChange={ handleOptions }
             />
           </label>
         </div>
       </form>
 
-      <MoviesList movies={movies} />
+      <MoviesList movies={ movies } />
     </section>
   );
 };
