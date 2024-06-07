@@ -33,6 +33,7 @@ const AllMovies = ({
             <option value="">Todas</option>
             <option value="Drama">Drama</option>
             <option value="Comedia">Comedia</option>
+            <option value="Crimen">Crimen</option>
           </select>
         </div>
 
