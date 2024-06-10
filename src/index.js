@@ -1,19 +1,20 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require("mysql2/promise");
+const mysql = require('mysql2/promise');
 
 // create and config server
 const server = express();
 server.use(cors());
 server.use(express.json());
 require('dotenv').config();
+api.set('view engine', 'ejs');
 
 //esa será la función que nos conecta con la db
 async function connectionDB () { 
     const connex =  await mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: process.env.DB_PASS,
+        password: 'Nyaf4*4nj00b3',
         database: 'netflix'
     });
     await connex.connect();
@@ -22,55 +23,48 @@ async function connectionDB () {
 
 //Endpoints
 server.get('/movies', async (req, res) => {
+	const conn = await connectionDB();
 
-    const conn = await connectionDB();
+	//query params
+	const genreFilterParam = req.query.genre;
+	const sortFilterParam = req.query.sort;
+	console.log(genreFilterParam);
+	console.log(sortFilterParam);
+	//sql -> SELECT
+	let data;
+	if (genreFilterParam === '' && sortFilterParam === 'asc') {
+		const selectMovies = 'SELECT * FROM movies ORDER BY title ASC;';
+		const [results] = await conn.query(selectMovies);
+		data = results;
+	} else if (genreFilterParam === '' && sortFilterParam === 'desc') {
+		const selectMovies = 'SELECT * FROM movies ORDER BY title = ?;';
+		const [results] = await conn.query(selectMovies, [sortFilterParam]);
+		data = results;
+	} else if (genreFilterParam !== '' && sortFilterParam === 'asc') {
+		const selectMovies =
+			'SELECT * FROM movies WHERE genre = ? ORDER BY title ASC;';
+		const [results] = await conn.query(selectMovies, [genreFilterParam]);
+		data = results;
+	} else if (genreFilterParam !== '' && sortFilterParam === 'desc') {
+		const selectMovies =
+			'SELECT * FROM movies WHERE genre = ? ORDER BY title DESC;';
+		const [results] = await conn.query(selectMovies, [genreFilterParam]);
+		data = results;
+	}
 
-        //query params
-        const genreFilterParam = req.query.genre;
-        console.log(genreFilterParam)
-        //sql -> SELECT
-        let data;
-        if (genreFilterParam === ""){
-          const selectMovies= "SELECT * FROM movies;";
-          const [results] = await conn.query(selectMovies);
-          data = results;
-        } else{
-          const selectMovies= "SELECT * FROM movies WHERE genre = ?;";
-          const [results] = await conn.query(selectMovies, [genreFilterParam]);
-          data = results;
-        };  
-        //respondo con los datos
-        res.json({success : true, movies: data});
+	//respondo con los datos
+	res.json({ success: true, movies: data });
+	conn.end();
+});
 
-	// const fakeMovies = [
-	// 	{
-	// 		id: 1,
-	// 		title: 'Wonder Woman',
-	// 		genre: 'Action',
-	// 		image:
-	// 			'https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/12/gal-gadot-como-wonder-woman-universo-extendido-dc-2895594.jpg?tf=3840x',
-	// 		category: 'Superhero',
-	// 		year: 2017,
-	// 		director: 'Patty Jenkins',
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		title: 'Inception',
-	// 		genre: 'Science Fiction',
-	// 		image:
-	// 			'https://m.media-amazon.com/images/S/pv-target-images/e826ebbcc692b4d19059d24125cf23699067ab621c979612fd0ca11ab42a65cb._SX1080_FMjpg_.jpg',
-	// 		category: 'Thriller',
-	// 		year: 2010,
-	// 		director: 'Christopher Nolan',
-	// 	},
-	// ];
-
-	// if (fakeMovies.length === 0) {
-	// 	res.status(500).json({ message: 'No hay películas', success: false });
-	// } else {
-	// 	res.status(200).json({ movies: fakeMovies, success: true });
-	// }
-    conn.end();
+server.get('/movie/:movieId', (req, res) => {
+	const movieId = req.params.movieId;
+	const conn = await connectionDB();
+	const select = 'SELECT * FROM movies WHERE idMovies = ?';
+	//todas las sentencias sql con variables tengo que ejecutarlas en la query y tendré 2 parámetros, la sentencia y el listado de variables que tenga
+	const [results] = await conn.query(select, [movieId]);
+	//mando el primer elemento del array results, que es un objeto y así después es má sencillo operar con los datos en mi ejs
+	res.render('detail', { movie: results[0] });
 });
 
 // init express aplication
