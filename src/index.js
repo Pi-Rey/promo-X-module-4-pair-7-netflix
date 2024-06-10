@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
+const jwt = require('jsonwebtoken');
 
 // create and config server
 const server = express();
@@ -54,7 +55,7 @@ server.get('/movies', async (req, res) => {
 
 	//respondo con los datos
 	res.json({ success: true, movies: data });
-	conn.end();
+	await conn.end();
 });
 
 server.get('/movie/:movieId', async (req, res) => {
@@ -65,8 +66,13 @@ server.get('/movie/:movieId', async (req, res) => {
 	const [results] = await conn.query(select, [movieId]);
 	//mando el primer elemento del array results, que es un objeto y así después es má sencillo operar con los datos en mi ejs
 	res.render('detail', { movie: results[0] });
-    console.log(results)
+    await conn.end();
 });
+
+//endpoint de registro
+server.post('/sign-up', async (req,res)=>{
+    //TODO: seguir con esto (Ejercicio 4.10)
+})
 
 // init express aplication
 const serverPort = 4000;
@@ -74,4 +80,3 @@ server.listen(serverPort, () => {
 	console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
-//TODO: qué endpoints puedo necesitar?
