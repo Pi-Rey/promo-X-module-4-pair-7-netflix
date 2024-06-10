@@ -6,13 +6,14 @@ const mysql = require("mysql2/promise");
 const server = express();
 server.use(cors());
 server.use(express.json());
+require('dotenv').config();
 
 //esa será la función que nos conecta con la db
 async function connectionDB () { 
     const connex =  await mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: 'Nyaf4*4nj00b3',
+        password: process.env.DB_PASS,
         database: 'netflix'
     });
     await connex.connect();
