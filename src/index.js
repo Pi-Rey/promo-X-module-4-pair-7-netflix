@@ -7,7 +7,7 @@ const server = express();
 server.use(cors());
 server.use(express.json());
 require('dotenv').config();
-api.set('view engine', 'ejs');
+server.set('view engine', 'ejs');
 
 //esa será la función que nos conecta con la db
 async function connectionDB () { 
@@ -57,7 +57,7 @@ server.get('/movies', async (req, res) => {
 	conn.end();
 });
 
-server.get('/movie/:movieId', (req, res) => {
+server.get('/movie/:movieId', async (req, res) => {
 	const movieId = req.params.movieId;
 	const conn = await connectionDB();
 	const select = 'SELECT * FROM movies WHERE idMovies = ?';
@@ -65,6 +65,7 @@ server.get('/movie/:movieId', (req, res) => {
 	const [results] = await conn.query(select, [movieId]);
 	//mando el primer elemento del array results, que es un objeto y así después es má sencillo operar con los datos en mi ejs
 	res.render('detail', { movie: results[0] });
+    console.log(results)
 });
 
 // init express aplication
